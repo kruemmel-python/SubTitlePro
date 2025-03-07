@@ -11,10 +11,10 @@ def erstelle_srt(segmente: list[dict]) -> str:
     Erstellt einen SRT-String aus einer Liste von Segmenten.
 
     Args:
-        segmente: Eine Liste von Segment-Dictionaries, die jeweils 'start', 'end' und 'text' enthalten.
+        segmente: Eine Liste von Dictionaries, wobei jedes Dictionary ein Segment mit 'start', 'end' und 'text' enthält.
 
     Returns:
-        Einen formatierten SRT-String.
+        Einen SRT-formatierten String.
     """
     srt_inhalt = ""
     for index, segment in enumerate(segmente, start=1):
@@ -32,7 +32,7 @@ def erstelle_srt(segmente: list[dict]) -> str:
 
 def sekunden_zu_srt_zeit(sekunden: float) -> str:
     """
-    Konvertiert Sekunden in das SRT-Zeitformat HH:MM:SS,mmm.
+    Konvertiert Sekunden in ein SRT-Zeitformat (HH:MM:SS,mmm).
 
     Args:
         sekunden: Die Zeit in Sekunden.
@@ -56,7 +56,7 @@ def transkribiere_audio_zu_srt(dateipfad: str, model: whisper.Whisper) -> str:
         model: Das Whisper-Modell.
 
     Returns:
-        Den transkribierten SRT-String.
+        Den SRT-String.
     """
     ergebnis = model.transcribe(dateipfad, fp16=False)
     segmente = ergebnis['segments']
@@ -65,7 +65,7 @@ def transkribiere_audio_zu_srt(dateipfad: str, model: whisper.Whisper) -> str:
 
 def merge_video_mit_srt(video_path: str, srt_path: str, output_path: str) -> tuple[bool, str]:
     """
-    Fügt eine SRT-Datei zu einem Video hinzu.
+    Fügt eine SRT-Datei zu einer Videodatei hinzu.
 
     Args:
         video_path: Der Pfad zur Videodatei.
@@ -73,7 +73,7 @@ def merge_video_mit_srt(video_path: str, srt_path: str, output_path: str) -> tup
         output_path: Der Pfad für die Ausgabedatei.
 
     Returns:
-        Ein Tupel, das angibt, ob der Vorgang erfolgreich war (True/False) und eine Fehlermeldung (falls vorhanden).
+        Ein Tupel mit einem Boolean, der angibt, ob der Vorgang erfolgreich war, und einer Fehlermeldung (falls vorhanden).
     """
     # Stelle sicher, dass Pfade unter Windows korrekt interpretiert werden
     srt_path_safe = srt_path.replace('\\', '/').replace(':', '\\:')
@@ -81,10 +81,14 @@ def merge_video_mit_srt(video_path: str, srt_path: str, output_path: str) -> tup
     command = [
         "ffmpeg",
         "-i", video_path,
-        "-vf", f"subtitles='{srt_path_safe}'",
-        "-c:v", "libx264",  # Videocodec
-        "-c:a", "aac",      # Audiocodec
-        "-y",                # Überschreiben, falls vorhanden
+        "-vf", f"subtitles='{srt_path_safe}'", # Fügt Untertitel aus der SRT-Datei hinzu
+        "-c:v", "libx264", # Videocodec (kann geändert werden, z.B. zu 'h264', 'mpeg4', etc.)
+        "-c:a", "aac", # Audiocodec (kann geändert werden, z.B. zu 'mp3', 'ac3', etc.)
+        # Um das Videoformat zu ändern, ändere die Erweiterung von output_path (z.B. .mkv, .webm)
+        # Weitere Audioeinstellungen können mit -af hinzugefügt werden (z.B. -af "volume=2.0" für doppelte Lautstärke)
+        # Beispiel: Um das Video in WebM mit Vorbis-Audio zu kodieren:
+        # command = ["ffmpeg", "-i", video_path, "-vf", f"subtitles='{srt_path_safe}'", "-c:v", "libvpx", "-c:a", "libvorbis", "-y", output_path]
+        "-y", # Überschreibt die Ausgabedatei, falls sie existiert
         output_path
     ]
     result = subprocess.run(command, capture_output=True, text=True)
@@ -92,9 +96,8 @@ def merge_video_mit_srt(video_path: str, srt_path: str, output_path: str) -> tup
 
 
 def main() -> None:
-    """
-    Hauptfunktion der Streamlit-Anwendung.
-    """
+    """Hauptfunktion der Anwendung."""
+
     st.title("🎬 Video mit automatischen Untertiteln")
 
     model = whisper.load_model("medium")
