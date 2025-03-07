@@ -18,6 +18,7 @@ SubTitlePro ist eine Streamlit-Anwendung, die automatisch Untertitel für Videos
 * **Benutzerfreundliche Oberfläche:**  Die intuitive Streamlit-Oberfläche macht die Erstellung von Videos mit Untertiteln zum Kinderspiel.
 * **Lokale Verarbeitung:** Die Verarbeitung findet lokal auf deinem Rechner statt, wodurch Datenschutz und Geschwindigkeit optimiert werden.
 
+![image](https://github.com/user-attachments/assets/0ed046f0-b4bb-426f-b68d-9634e45edcaa)
 
 ## 🚀 Schnellstart
 
